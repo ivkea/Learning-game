@@ -59,10 +59,11 @@ public class DiceManager : MonoBehaviour
         {
             var dice = Instantiate(prefab, transform.position + Random.insideUnitSphere, Quaternion.identity);
             activeDices.Add(dice);
+
+            OnDiceCountChanged?.Invoke(type, GetDiceTypeAmount(type));
         }
         else
             Debug.LogError("Префаба нет");
-        OnDiceCountChanged?.Invoke(type, CountDiceTypeAmount(type));
     }
 
     public void RemoveDice(Dice dice)
@@ -71,8 +72,8 @@ public class DiceManager : MonoBehaviour
         {
             activeDices.Remove(dice);
             Destroy(dice.gameObject);
+            OnDiceCountChanged?.Invoke(dice.Type, GetDiceTypeAmount(dice.Type));
         }
-        OnDiceCountChanged?.Invoke(dice.Type, CountDiceTypeAmount(dice.Type));
     }
 
     public void RemoveDice(DiceType type)
@@ -83,10 +84,10 @@ public class DiceManager : MonoBehaviour
             {
                 activeDices.Remove(dice);
                 Destroy(dice.gameObject);
+                OnDiceCountChanged?.Invoke(type, GetDiceTypeAmount(type));
                 break;
             }
         }
-        OnDiceCountChanged?.Invoke(type, CountDiceTypeAmount(type));
     }
 
     private bool AllDiceStopped()
@@ -113,7 +114,7 @@ public class DiceManager : MonoBehaviour
         return total;
     }
 
-    private int CountDiceTypeAmount(DiceType type)
+    public int GetDiceTypeAmount(DiceType type)
     {
         var count = 0;
         foreach (var dice in activeDices)
