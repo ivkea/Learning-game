@@ -117,7 +117,7 @@ public class DiceSide
     
     public DiceSide(Vector3 LocalDirection, int sideValue)
     {
-        this.localDirection = LocalDirection.normalized;
+        localDirection = LocalDirection.normalized;
         value = sideValue;
     }
 }
