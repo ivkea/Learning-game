@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 using AYellowpaper.SerializedCollections;
+using System;
+using Random = UnityEngine.Random;
+
 
 [RequireComponent(typeof(PlayerInput))]
 public class DiceManager : MonoBehaviour
@@ -13,8 +16,11 @@ public class DiceManager : MonoBehaviour
     [SerializeField] private InputActionReference rollActionRef;
 
     [SerializeField] private SerializedDictionary<DiceType, Dice> prefabDict;
-    [SerializeField] private List<DiceType> initialDices = new List<DiceType> { DiceType.D6, DiceType.D4 };
+    [SerializeField] private List<DiceType> initialDices = new() { DiceType.D4, DiceType.D6 };
+
     private List<Dice> activeDices;
+
+    public event Action<DiceType, int> OnDiceCountChanged;
 
     [SerializeField] private float minForce = 1f;
     [SerializeField] private float maxForce = 2f;
@@ -26,9 +32,7 @@ public class DiceManager : MonoBehaviour
     private void Awake()
     {
         activeDices = new List<Dice>();
-    }
-    private void Start()
-    {
+
         foreach (var type in initialDices)
         {
             SpawnDice(type);
@@ -58,6 +62,7 @@ public class DiceManager : MonoBehaviour
         }
         else
             Debug.LogError("Префаба нет");
+        OnDiceCountChanged?.Invoke(type, CountDiceTypeAmount(type));
     }
 
     public void RemoveDice(Dice dice)
@@ -67,6 +72,7 @@ public class DiceManager : MonoBehaviour
             activeDices.Remove(dice);
             Destroy(dice.gameObject);
         }
+        OnDiceCountChanged?.Invoke(dice.Type, CountDiceTypeAmount(dice.Type));
     }
 
     public void RemoveDice(DiceType type)
@@ -80,6 +86,7 @@ public class DiceManager : MonoBehaviour
                 break;
             }
         }
+        OnDiceCountChanged?.Invoke(type, CountDiceTypeAmount(type));
     }
 
     private bool AllDiceStopped()
@@ -104,6 +111,17 @@ public class DiceManager : MonoBehaviour
         }
 
         return total;
+    }
+
+    private int CountDiceTypeAmount(DiceType type)
+    {
+        var count = 0;
+        foreach (var dice in activeDices)
+        {
+            if (type == dice.Type)
+                count++;
+        }
+        return count;
     }
 
     public void ThrowAll()

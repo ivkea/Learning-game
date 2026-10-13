@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class DiceTypeUi : MonoBehaviour
+public class DiceTypeUI : MonoBehaviour
 {
     [SerializeField] private DiceType diceType;
 
@@ -13,25 +13,17 @@ public class DiceTypeUi : MonoBehaviour
 
     public UnityEvent<int> onCountChanged;
 
-    private int currentCount;
-
     public DiceType Type => diceType;
 
 
     public void UpdateValue(int count)
     {
-        currentCount = count;
         inputField.text = count.ToString();
     }
 
     private void Awake() 
     {
-        leftArrow.onClick.AddListener(() => UpdateModelValue(currentCount - 1));
-        rightArrow.onClick.AddListener(() => UpdateModelValue(currentCount + 1));
-    }
-
-    private void UpdateModelValue(int count)
-    {
-        onCountChanged?.Invoke(count);
+        leftArrow.onClick.AddListener(() => onCountChanged.Invoke(-1));
+        rightArrow.onClick.AddListener(() => onCountChanged.Invoke(1));
     }
 }
