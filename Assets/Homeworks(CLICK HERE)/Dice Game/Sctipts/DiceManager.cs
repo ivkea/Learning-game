@@ -65,7 +65,8 @@ public class DiceManager : MonoBehaviour
             OnDiceCountChanged?.Invoke(type, GetDiceTypeAmount(type));
         }
         else
-            Debug.LogError("Префаба нет");
+            Debug.LogError($"Префаба нет! Запрошен тип: '{type}' (число: {(int)type}). " +
+               $"В словаре сейчас лежат ключи: {string.Join(", ", prefabDict.Keys)}");
     }
 
     public void RemoveDice(Dice dice)

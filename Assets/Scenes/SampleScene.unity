@@ -353,13 +353,13 @@ MonoBehaviour:
   rollActionRef: {fileID: -2665263195243506015, guid: e986ff9aab8cbda409df43b40fab6ff4, type: 3}
   prefabDict:
     _serializedList:
-    - Key: 1
+    - Key: 4
       Value: {fileID: 6198707348889392945, guid: a1127a7572356564c92ecd4a3230edb9, type: 3}
-    - Key: 0
+    - Key: 6
       Value: {fileID: 7669633632367131313, guid: f574b5885a0660e4d8c080f554b2d341, type: 3}
-    - Key: 2
+    - Key: 8
       Value: {fileID: 6198707348889392945, guid: 64fe76201612c874a8c1231e41b370ec, type: 3}
-  initialDices: 01000000000000000200000002000000010000000200000000000000
+  initialDices: 06000000040000000800000006000000040000000600000008000000
   minForce: 3
   maxForce: 6
   minTorque: 10
@@ -585,9 +585,9 @@ RectTransform:
   - {fileID: 530386064}
   m_Father: {fileID: 1347713284}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -824}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &500849739
@@ -666,7 +666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc756c45d20f21240956793635de3e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DiceTypeUI
-  diceType: 1
+  diceType: 4
   inputField: {fileID: 855488745}
   leftArrow: {fileID: 1100539767}
   rightArrow: {fileID: 530386065}
@@ -1174,9 +1174,9 @@ MonoBehaviour:
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1240,7 +1240,7 @@ MonoBehaviour:
   m_Text: 
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
-  m_ReadOnly: 0
+  m_ReadOnly: 1
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_OnFocusSelectAll: 1
@@ -1615,7 +1615,6 @@ GameObject:
   - component: {fileID: 1347713283}
   - component: {fileID: 1347713282}
   - component: {fileID: 1347713281}
-  - component: {fileID: 1347713280}
   - component: {fileID: 1347713285}
   m_Layer: 5
   m_Name: Canvas
@@ -1624,32 +1623,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1347713280
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1347713279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &1347713281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1746,7 +1719,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   diceManager: {fileID: 365247754}
-  UI: {fileID: 500849742}
+  diceSelectorUIs:
+    _serializedList:
+    - Key: 4
+      Value: {fileID: 500849742}
 --- !u!1 &1500467932
 GameObject:
   m_ObjectHideFlags: 0
