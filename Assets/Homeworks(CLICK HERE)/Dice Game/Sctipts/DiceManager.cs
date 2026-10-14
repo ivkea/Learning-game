@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using AYellowpaper.SerializedCollections;
 using System;
 using Random = UnityEngine.Random;
+using UnityEngine.SocialPlatforms.Impl;
 
 
 [RequireComponent(typeof(PlayerInput))]
@@ -21,6 +22,7 @@ public class DiceManager : MonoBehaviour
     private List<Dice> activeDices;
 
     public event Action<DiceType, int> OnDiceCountChanged;
+    public event Action<int, int, GameResult> OnGameOutcome; // score/target/gameResult
 
     [SerializeField] private float minForce = 1f;
     [SerializeField] private float maxForce = 2f;
@@ -125,6 +127,16 @@ public class DiceManager : MonoBehaviour
         return count;
     }
 
+    private int GetDiceTypeAmount()
+    {
+        var count = 0;
+        foreach (var dice in activeDices)
+        {
+            count += (int)dice.Type;
+        }
+        return count;
+    }
+
     public void ThrowAll()
     {
         StopAllCoroutines();
@@ -146,7 +158,17 @@ public class DiceManager : MonoBehaviour
     {
         yield return new WaitUntil(AllDiceStopped);
 
-        int totalScore = GetAllValues();
+        var totalScore = GetAllValues();
+        int targetScore = GetDiceTypeAmount() * Random.Range(0, 1);
+
+        OnGameOutcome?.Invoke(totalScore, targetScore, (totalScore > targetScore) ? GameResult.Win : (totalScore == targetScore) ? GameResult.Draw : GameResult.Lose);
         Debug.Log($"cумма очков {totalScore}");
     }
+}
+
+public enum GameResult
+{
+    Win,
+    Draw,
+    Lose
 }

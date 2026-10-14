@@ -125,7 +125,7 @@ public class DiceSide
 
 public enum DiceType
 {
-    D6,
-    D4,
-    D8
+    D6 = 6,
+    D4 = 4,
+    D8 = 8
 }
