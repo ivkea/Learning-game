@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using AYellowpaper.SerializedCollections;
 using System;
 using Random = UnityEngine.Random;
-using UnityEngine.SocialPlatforms.Impl;
+
 
 
 [RequireComponent(typeof(PlayerInput))]
@@ -127,7 +127,7 @@ public class DiceManager : MonoBehaviour
         return count;
     }
 
-    private int GetDiceTypeAmount()
+    private int GetMaxScore()
     {
         var count = 0;
         foreach (var dice in activeDices)
@@ -159,7 +159,7 @@ public class DiceManager : MonoBehaviour
         yield return new WaitUntil(AllDiceStopped);
 
         var totalScore = GetAllValues();
-        int targetScore = GetDiceTypeAmount() * Random.Range(0, 1);
+        var targetScore = (int)(GetMaxScore() * Random.Range(0f, 1f));
 
         OnGameOutcome?.Invoke(totalScore, targetScore, (totalScore > targetScore) ? GameResult.Win : (totalScore == targetScore) ? GameResult.Draw : GameResult.Lose);
         Debug.Log($"cумма очков {totalScore}");
