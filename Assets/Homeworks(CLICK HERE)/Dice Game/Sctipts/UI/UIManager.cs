@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private DiceManager diceManager;
     [SerializeField] private SerializedDictionary<DiceType, DiceSelectorUi> diceSelectorUIs;
+    [SerializeField] private ScoreDisplayUI scoreDisplayUI;
 
     private void Start()
     {
@@ -21,6 +22,7 @@ public class UIManager : MonoBehaviour
         }
 
         diceManager.OnDiceCountChanged += HandleCountChange;
+        diceManager.OnGameOutcome += HandleGameOutcome;
 
         foreach (var pair in diceSelectorUIs)
         {
@@ -37,6 +39,8 @@ public class UIManager : MonoBehaviour
                     diceManager.RemoveDice(type);
             });
         }
+
+        scoreDisplayUI.UpdateValue(0, 0);
     }
 
     private void HandleCountChange(DiceType type, int count)
@@ -47,9 +51,15 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void HandleGameOutcome(int score, int targetScore, GameResult condition)
+    {
+        scoreDisplayUI.UpdateValue(score, targetScore, condition);
+    }
+
     private void OnDestroy()
     {
         diceManager.OnDiceCountChanged -= HandleCountChange;
+        diceManager.OnGameOutcome -= HandleGameOutcome;
     }
 
 }
