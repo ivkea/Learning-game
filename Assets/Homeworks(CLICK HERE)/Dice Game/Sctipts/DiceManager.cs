@@ -29,7 +29,9 @@ public class DiceManager : MonoBehaviour
     [SerializeField] private float minTorque = 10f;
     [SerializeField] private float maxTorque = 16f;
 
+    private int targetScore = 0;
 
+    public int TargetScore => targetScore;
 
     private void Awake()
     {
@@ -39,12 +41,14 @@ public class DiceManager : MonoBehaviour
         {
             SpawnDice(type);
         }
+
     }
 
     private void OnRoll(InputValue value)
     {
         if (value.isPressed)
         {
+            GenerateTargetScore(); // ?
             ThrowAll();
         }
     }
@@ -127,7 +131,7 @@ public class DiceManager : MonoBehaviour
         return count;
     }
 
-    private int GetMaxScore()
+    public int GetMaxScore()
     {
         var count = 0;
         foreach (var dice in activeDices)
@@ -139,6 +143,8 @@ public class DiceManager : MonoBehaviour
 
     public void ThrowAll()
     {
+        if (activeDices.Count == 0) return;
+
         StopAllCoroutines();
 
         foreach (var dice in activeDices)
@@ -156,19 +162,31 @@ public class DiceManager : MonoBehaviour
 
     private IEnumerator CalculateCoRoutine()
     {
+        yield return new WaitForSeconds(0.3f); // для того чтоб кубики успели разлететься
         yield return new WaitUntil(AllDiceStopped);
 
         var totalScore = GetAllValues();
-        var targetScore = (int)(GetMaxScore() * Random.Range(0f, 1f));
+        GameResult result = totalScore > targetScore ? GameResult.Win
+                          : totalScore == targetScore ? GameResult.Draw
+                          : GameResult.Lose;
 
-        OnGameOutcome?.Invoke(totalScore, targetScore, (totalScore > targetScore) ? GameResult.Win : (totalScore == targetScore) ? GameResult.Draw : GameResult.Lose);
+        OnGameOutcome?.Invoke(totalScore, targetScore, result);
         Debug.Log($"cумма очков {totalScore}");
     }
+
+    private void GenerateTargetScore()
+    {
+        targetScore = Mathf.RoundToInt(GetMaxScore() * Random.Range(0.4f, 0.8f));
+
+        OnGameOutcome?.Invoke(0, targetScore, GameResult.None);
+    }
+
 }
 
 public enum GameResult
 {
     Win,
     Draw,
-    Lose
+    Lose,
+    None
 }
