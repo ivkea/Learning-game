@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -14,7 +16,7 @@ public class ScoreDisplayUI : MonoBehaviour
     public void UpdateValue(int score, int targetScore, GameResult condition = GameResult.None)
     {
         string color = ColorUtility.ToHtmlStringRGB(GetColor(condition)); //гугл спас
-        string targetStr = targetScore > 0 ? targetScore.ToString() : "--";
+        string targetStr = targetScore > 0 ? targetScore.ToString() : "-";
 
         scoreText.text = $"<color=#{color}>{score}</color> <color=#FFFFFF>/</color> <color=#{color}>{targetStr}</color>";
     }
