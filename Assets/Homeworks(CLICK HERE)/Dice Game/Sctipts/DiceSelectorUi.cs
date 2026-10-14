@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class DiceTypeUI : MonoBehaviour
+public class DiceSelectorUi : MonoBehaviour
 {
     [SerializeField] private DiceType diceType;
 

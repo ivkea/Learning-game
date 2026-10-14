@@ -1,14 +1,11 @@
+using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private DiceManager diceManager;
-    [SerializeField] private DiceTypeUI UI; //затем лист из dicetype ui
-
-    private void Awake()
-    {
-        //затем заполнение листа dicetype ui
-    }
+    [SerializeField] private SerializedDictionary<DiceType, DiceSelectorUi> diceSelectorUIs;
 
     private void Start()
     {
@@ -17,25 +14,37 @@ public class UIManager : MonoBehaviour
 
     private void InitUI()
     {
+        if (diceManager == null)
+        {
+            Debug.LogError("DiceManager не назначен в инспекторе!", this);
+            return;
+        }
+
         diceManager.OnDiceCountChanged += HandleCountChange;
 
-        //затем будет цикл с итерацией по всем dicetypeUI
-
-        var type = UI.Type;
-        UI.UpdateValue(diceManager.GetDiceTypeAmount(type));
-
-        UI.onCountChanged.AddListener(delta =>
+        foreach (var pair in diceSelectorUIs)
         {
-            if (delta > 0)
-                diceManager.SpawnDice(type);
-            else if (delta < 0)
-                diceManager.RemoveDice(type);
-        });
+            var type = pair.Key;
+            var diceSelectorUI = pair.Value;
+
+            diceSelectorUI.UpdateValue(diceManager.GetDiceTypeAmount(type));
+
+            diceSelectorUI.onCountChanged.AddListener(delta =>
+            {
+                if (delta > 0)
+                    diceManager.SpawnDice(type);
+                else if (delta < 0)
+                    diceManager.RemoveDice(type);
+            });
+        }
     }
 
     private void HandleCountChange(DiceType type, int count)
     {
-        UI.UpdateValue(count);
+        if (diceSelectorUIs.TryGetValue(type, out var targetUI))
+        {
+            targetUI.UpdateValue(count);
+        }
     }
 
     private void OnDestroy()
