@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class ScoreDisplayUI : MonoBehaviour
 {
-    [SerializeField] private TMP_Text scoreUI;
-    [SerializeField] private TMP_Text targetScoreUI;
+    [SerializeField] private TMP_Text scoreText;
 
     [Header("Цвета кондишенов")]
     [SerializeField] private Color winColor = Color.green;
@@ -14,24 +13,17 @@ public class ScoreDisplayUI : MonoBehaviour
 
     public void UpdateValue(int score, int targetScore, GameResult condition = GameResult.None)
     {
-        if (scoreUI != null) scoreUI.text = score.ToString();
-        if (targetScoreUI != null) targetScoreUI.text = targetScore.ToString();
+        string color = ColorUtility.ToHtmlStringRGB(GetColor(condition)); //гугл спас
+        string targetStr = targetScore > 0 ? targetScore.ToString() : "--";
 
-        ChangeColor(condition);
-
+        scoreText.text = $"<color=#{color}>{score}</color> <color=#FFFFFF>/</color> <color=#{color}>{targetStr}</color>";
     }
 
-    private void ChangeColor(GameResult condition)
+    private Color GetColor(GameResult condition) => condition switch
     {
-        Color textColor = condition switch
-        {
-            GameResult.Win => winColor,
-            GameResult.Lose => loseColor,
-            GameResult.Draw => drawColor,
-            _ => noneColor
-        };
-
-        if (scoreUI != null) scoreUI.color = textColor;
-        if (targetScoreUI != null) targetScoreUI.color = textColor;
-    }
+        GameResult.Win => winColor,
+        GameResult.Lose => loseColor,
+        GameResult.Draw => drawColor,
+        _ => noneColor
+    };
 }
