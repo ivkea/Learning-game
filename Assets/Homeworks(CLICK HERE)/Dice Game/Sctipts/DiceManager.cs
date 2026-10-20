@@ -152,11 +152,3 @@ public class DiceManager : MonoBehaviour
     }
 
 }
-
-public enum GameResult
-{
-    Win,
-    Draw,
-    Lose,
-    None
-}
