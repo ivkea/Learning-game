@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-public enum GameResult
+﻿public enum GameResult
 {
     Win,
     Draw,
