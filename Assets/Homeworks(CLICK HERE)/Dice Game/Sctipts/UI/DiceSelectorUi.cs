@@ -11,14 +11,28 @@ public class DiceSelectorUi : MonoBehaviour
 
     public UnityEvent<int> onCountChanged;
 
+    private int currentCount;
+
     public void UpdateValue(int count)
     {
+        currentCount = Mathf.Max(0, count);
         inputField.text = count.ToString();
     }
 
     private void Awake() 
     {
-        leftArrow.onClick.AddListener(() => onCountChanged.Invoke(-1));
-        rightArrow.onClick.AddListener(() => onCountChanged.Invoke(1));
+        leftArrow.onClick.AddListener(OnLeftClicked);
+        rightArrow.onClick.AddListener(OnRightClicked);
+    }
+
+    private void OnLeftClicked()
+    {
+        if (currentCount > 0)
+            onCountChanged?.Invoke(currentCount -1);
+    }
+
+    private void OnRightClicked()
+    {
+        onCountChanged?.Invoke(currentCount + 1);
     }
 }
