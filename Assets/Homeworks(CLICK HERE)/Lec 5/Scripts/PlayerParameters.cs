@@ -50,6 +50,9 @@ namespace Assets.Homeworks_CLICK_HERE_.Lec_5.Scripts
             }
         }
 
+        public bool CanJump => Stamina >= JumpStaminaCost && Hunger >= JumpHungerCost;
+        public bool CanSprint => Stamina >= SprintStaminaCost && Hunger >= SprintHungerCost;
+
         private void Start()
         {
             hp = MaxHp;
@@ -78,12 +81,15 @@ namespace Assets.Homeworks_CLICK_HERE_.Lec_5.Scripts
 
         public void Sprint()
         {
+            if (!CanSprint) return;
+
             Stamina -= SprintStaminaCost;
             Hunger -= SprintHungerCost;
         }
 
         public void Jump()
         {
+            if (!CanJump) return;
             Stamina -= JumpStaminaCost;
             Hunger -= JumpHungerCost;
         }
