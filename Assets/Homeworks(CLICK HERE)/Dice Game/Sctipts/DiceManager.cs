@@ -1,11 +1,11 @@
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.InputSystem;
-
 using AYellowpaper.SerializedCollections;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
 
@@ -17,7 +17,7 @@ public class DiceManager : MonoBehaviour
     [SerializeField] private InputActionReference rollActionRef;
 
     [SerializeField] private SerializedDictionary<DiceType, Dice> prefabDict;
-    [SerializeField] private List<DiceType> initialDices = new() { DiceType.D4, DiceType.D6 };
+    [SerializeField] private SerializedDictionary<DiceType, int> dices = new() { { DiceType.D4, 1 }, { DiceType.D6, 1 } };
 
     private List<Dice> activeDices;
 
@@ -37,18 +37,23 @@ public class DiceManager : MonoBehaviour
     {
         activeDices = new List<Dice>();
 
-        foreach (var type in initialDices)
+        var initialDices = new SerializedDictionary<DiceType, int>(dices);
+        dices.Clear();
+
+        foreach (var pair in initialDices)
         {
-            SpawnDice(type);
+            for (var _ = 0; _ < pair.Value; _++)
+                SpawnDice(pair.Key);
         }
 
+        initialDices.Clear();
     }
 
     private void OnRoll(InputValue value)
     {
         if (value.isPressed)
         {
-            GenerateTargetScore(); // ?
+            GenerateTargetScore();
             ThrowAll();
         }
     }
@@ -66,10 +71,10 @@ public class DiceManager : MonoBehaviour
             var dice = Instantiate(prefab, transform.position + Random.insideUnitSphere, Quaternion.identity);
             activeDices.Add(dice);
 
-            OnDiceCountChanged?.Invoke(type, GetDiceTypeAmount(type));
+            var count = GetDiceTypeAmount(type) + 1;
+            dices[type] = count;
+            OnDiceCountChanged?.Invoke(type, count);
         }
-        else
-            Debug.LogError($"Префаба нет");
     }
 
     public void RemoveDice(Dice dice)
@@ -78,58 +83,30 @@ public class DiceManager : MonoBehaviour
         {
             activeDices.Remove(dice);
             Destroy(dice.gameObject);
-            OnDiceCountChanged?.Invoke(dice.Type, GetDiceTypeAmount(dice.Type));
+
+            var type = dice.Type;
+            var count = GetDiceTypeAmount(type) - 1;
+            dices[type] = count;
+            OnDiceCountChanged?.Invoke(type, count);
         }
     }
 
     public void RemoveDice(DiceType type)
     {
-        foreach (var dice in activeDices)
+        var dice = activeDices.Find(d => d.Type == type);
+        if (dice != null)
         {
-            if (dice.Type == type)
-            {
-                activeDices.Remove(dice);
-                Destroy(dice.gameObject);
-                OnDiceCountChanged?.Invoke(type, GetDiceTypeAmount(type));
-                break;
-            }
+            RemoveDice(dice);
         }
     }
 
-    private bool AllDiceStopped()
-    {
-        foreach (var dice in activeDices)
-        {
-            if (!dice.IsStopped)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-    public int GetAllValues()
-    {
-        int total = 0;
-        foreach (var dice in activeDices)
-        {
-            int value = dice.GetValue();
-            total += value;
-            Debug.Log($"кубик {dice.Type} выбросил {value}");
-        }
+    private bool AllDiceStopped() => activeDices.All(dice => dice.IsStopped);
 
-        return total;
-    }
+    public int GetAllValues() => activeDices.Sum(dice => dice.GetValue());
 
-    public int GetDiceTypeAmount(DiceType type)
-    {
-        var count = 0;
-        foreach (var dice in activeDices)
-        {
-            if (type == dice.Type)
-                count++;
-        }
-        return count;
-    }
+    public int GetDiceTypeAmount(DiceType type) => dices.TryGetValue(type, out var count) ? count : 0;
+
+    public int GetMaxScore() => dices.Sum(pair => (int)pair.Key * pair.Value);
 
     public int GetMaxScore()
     {
@@ -163,8 +140,11 @@ public class DiceManager : MonoBehaviour
     private IEnumerator CalculateCoRoutine()
     {
         yield return new WaitForSeconds(0.3f); // для того чтоб кубики успели разлететься
-        yield return new WaitUntil(AllDiceStopped);
-
+        
+        while (!AllDiceStopped())
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
         var totalScore = GetAllValues();
         GameResult result = totalScore > targetScore ? GameResult.Win
                           : totalScore == targetScore ? GameResult.Draw
@@ -181,12 +161,4 @@ public class DiceManager : MonoBehaviour
         OnGameOutcome?.Invoke(0, targetScore, GameResult.None);
     }
 
-}
-
-public enum GameResult
-{
-    Win,
-    Draw,
-    Lose,
-    None
 }

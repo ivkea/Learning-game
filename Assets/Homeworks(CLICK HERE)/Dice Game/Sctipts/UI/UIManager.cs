@@ -31,12 +31,18 @@ public class UIManager : MonoBehaviour
 
             diceSelectorUI.UpdateValue(diceManager.GetDiceTypeAmount(type));
 
-            diceSelectorUI.onCountChanged.AddListener(delta =>
+            diceSelectorUI.onCountChanged.AddListener(count =>
             {
+                int currentCount = diceManager.GetDiceTypeAmount(type);
+                int delta = count - currentCount;
+
                 if (delta > 0)
-                    diceManager.SpawnDice(type);
+                    for (int i = 0; i < delta; i++)
+                        diceManager.SpawnDice(type);
+
                 else if (delta < 0)
-                    diceManager.RemoveDice(type);
+                    for (int i = 0; i < - delta; i++)
+                        diceManager.RemoveDice(type);
             });
         }
 
