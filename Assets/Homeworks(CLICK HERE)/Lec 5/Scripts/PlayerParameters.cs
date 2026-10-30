@@ -9,8 +9,8 @@ namespace Assets.Homeworks_CLICK_HERE_.Lec_5.Scripts
         private float stamina;
         private float hunger;
 
-        [SerializeField] PlayerData playerData;
-        [SerializeField] PlayerModifiers playerModifiers;
+        [SerializeField] private PlayerData playerData;
+        private PlayerModifiers playerModifiers = new();
         
 
         public float MaxHp => playerData.MaxHp * playerModifiers.MaxHpModifier;
@@ -26,7 +26,7 @@ namespace Assets.Homeworks_CLICK_HERE_.Lec_5.Scripts
         public float Hp
         {
             get => hp;
-            set
+            private set
             {
                 hp = Mathf.Clamp(value, 0, MaxHp);
             }
@@ -35,7 +35,7 @@ namespace Assets.Homeworks_CLICK_HERE_.Lec_5.Scripts
         public float Stamina
         {
             get => stamina;
-            set
+            private set
             {
                 stamina = Mathf.Clamp(value, 0, MaxStamina);
             }
@@ -44,13 +44,18 @@ namespace Assets.Homeworks_CLICK_HERE_.Lec_5.Scripts
         public float Hunger
         {
             get => hunger;
-            set
+            private set
             {
                 hunger = Mathf.Clamp(value, 0, MaxHunger);
             }
         }
 
-
+        private void Start()
+        {
+            hp = MaxHp;
+            stamina = MaxStamina;
+            hunger = MaxHunger;
+        }
         public void TakeDamage(float damage)
         {
             Hp -= damage * playerModifiers.DamageReductionModifier;
@@ -61,10 +66,14 @@ namespace Assets.Homeworks_CLICK_HERE_.Lec_5.Scripts
             Hp += heal;
         }
 
+        public void Eat(/* food */) 
+        {
+           /* Hunger += food.hungerAmount */
+        }
         public void TakeFoodHeal(float heal)
         {
             Hp += heal;
-            Hunger -= SprintHungerCost;
+            Hunger -= HealHungerCost;
         }
 
         public void Sprint()
@@ -77,6 +86,11 @@ namespace Assets.Homeworks_CLICK_HERE_.Lec_5.Scripts
         {
             Stamina -= JumpStaminaCost;
             Hunger -= JumpHungerCost;
+        }
+
+        public void RestoreStamina(float amount = 1)
+        {
+            Stamina += amount;
         }
     }
 }
